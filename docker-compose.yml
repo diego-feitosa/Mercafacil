@@ -4,14 +4,17 @@ services:
   mysql:
     image: mysql
     environment:
-    - MYSQL_ROOT_PASSWORD=admin
-    - MYSQL_DATABASE=admin
-    - MYSQL_USER=admin
-    - MYSQL_PASSWORD=admin
-    - MYSQL_ROOT_HOST=%
+      - MYSQL_ROOT_PASSWORD=admin
+      - MYSQL_DATABASE=admin
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=admin
+      - MYSQL_ROOT_HOST=%
     ports:
       - "3306:3306"
     command: --default-authentication-plugin=mysql_native_password
+    networks: 
+      - macapa
+      - dbs
 
   postgresql:
     image: postgres
@@ -20,3 +23,50 @@ services:
     environment:
       POSTGRES_PASSWORD: "admin"
       POSTGRES_USER: "admin"
+    networks: 
+      - varejao
+      - dbs
+
+  adminer:
+    image: adminer:latest
+    ports:
+      - 8080:8080
+    networks: 
+      - dbs
+
+  postwoman:
+    image: liyasthomas/postwoman
+    ports: 
+      - 3000:3000
+    networks:
+      - apis
+
+  varejao_api:
+    image: python:3
+    ports:
+      - 8000:8000
+    volumes: 
+      - ./varejao:/home/api
+    stdin_open: true
+    tty: true
+    networks: 
+      - varejao
+      - apis
+
+  macapa_api:
+    image: python:3
+    ports:
+      - 5000:5000
+    volumes: 
+      - ./macapa:/home/api
+    stdin_open: true
+    tty: true
+    networks: 
+      - macapa
+      - apis
+
+networks: 
+  varejao:
+  macapa:
+  apis:
+  dbs:
