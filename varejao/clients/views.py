@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from .models import Contacts
+from .models import Contact
 from .serializers import ContactSerializer
 
 class ContactList(APIView):
@@ -11,7 +11,7 @@ class ContactList(APIView):
     """
     permission_classes = (IsAuthenticated,)
     def get(self, request, format=None):
-        queryset = Contacts.objects.all()
+        queryset = Contact.objects.all()
         serializer = ContactSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -19,7 +19,7 @@ class ContactList(APIView):
         try:
             contacts = []
             for contact in request.data['contacts']:
-                n = Contacts()
+                n = Contact()
                 n.nome = contact['name']
                 n.celular = contact['cellphone']
                 n.save()
@@ -27,7 +27,7 @@ class ContactList(APIView):
             serializer = ContactSerializer(contacts, many=True)
         except KeyError:
             try:
-                contact = Contacts()
+                contact = Contact()
                 contact.nome = request.data['name']
                 contact.celular = request.data['cellphone']
                 contact.save()
